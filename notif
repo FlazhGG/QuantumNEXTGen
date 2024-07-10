@@ -6,6 +6,7 @@ local CoreGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local library
 local templateFolder
 local canvas
+local soundEnabled = true -- Enable or disable sound notifications
 
 function NotificationLibrary:Load()
     library = game:GetObjects("rbxassetid://15133757123")[1]
@@ -15,7 +16,7 @@ function NotificationLibrary:Load()
     library.Parent = CoreGui
 end
 
-function NotificationLibrary:SendNotification(Mode, Text, Duration)
+function NotificationLibrary:SendNotification(Mode, Text, Duration, CustomColor, Icon, Sound)
     local libraryCore = CoreGui:FindFirstChild(LibraryName)
     if not libraryCore then
         NotificationLibrary:Load()
@@ -32,6 +33,22 @@ function NotificationLibrary:SendNotification(Mode, Text, Duration)
                 local filler = Notification.Filler
                 local bar = Notification.bar
                 Notification.Header.Text = Text
+
+                -- Setting custom color if provided
+                if CustomColor then
+                    Notification.BackgroundColor3 = CustomColor
+                end
+                
+                -- Adding an icon if provided
+                if Icon then
+                    local iconImage = Instance.new("ImageLabel")
+                    iconImage.Name = "Icon"
+                    iconImage.Image = Icon
+                    iconImage.Size = UDim2.new(0, 24, 0, 24)
+                    iconImage.Position = UDim2.new(0, 5, 0, (Notification.Size.Y.Offset - 24) / 2)
+                    iconImage.BackgroundTransparency = 1
+                    iconImage.Parent = Notification
+                end
                 
                 -- Adding aesthetic improvements
                 local corner = Instance.new("UICorner")
@@ -69,6 +86,14 @@ function NotificationLibrary:SendNotification(Mode, Text, Duration)
                 TweenService:Create(filler, T3, {Size = UDim2.new(0.011, 0, 1, 0)}):Play()
                 TweenService:Create(bar, T2, {Size = UDim2.new(1, 0, 0.05, 0)}):Play()
             
+                -- Play sound if enabled and provided
+                if soundEnabled and Sound then
+                    local sound = Instance.new("Sound")
+                    sound.SoundId = Sound
+                    sound.Parent = Notification
+                    sound:Play()
+                end
+                
                 task.wait(Duration)
             
                 TweenService:Create(filler, T1, {Size = UDim2.new(1, 0, 1, 0)}):Play()
@@ -85,6 +110,10 @@ function NotificationLibrary:SendNotification(Mode, Text, Duration)
     else
         warn("Invalid theme applied")
     end
+end
+
+function NotificationLibrary:EnableSound(enable)
+    soundEnabled = enable
 end
 
 return NotificationLibrary
