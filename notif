@@ -2,7 +2,7 @@ local LibraryName = "Notification Library"
 local NotificationLibrary = {}
 local TweenService = game:GetService("TweenService")
 local Players = game:GetService("Players")
-local CoreGui = Players.LocalPlayer:WaitForChild("PlayerGui") -- Use PlayerGui instead of CoreGui
+local CoreGui = Players.LocalPlayer:WaitForChild("PlayerGui")
 local library
 local templateFolder
 local canvas
@@ -33,6 +33,10 @@ function NotificationLibrary:SendNotification(Mode, Text, Duration)
                 local bar = Notification.bar
                 Notification.Header.Text = Text
                 
+                local corner = Instance.new("UICorner")
+                corner.CornerRadius = UDim.new(0, 8)
+                corner.Parent = Notification
+
                 Notification.Visible = true
                 Notification.Parent = canvas
 
